@@ -1,0 +1,28 @@
+{
+  "name": "prjs",
+  "version": "0.0.1",
+  "description": "Show GitHub pull requests",
+  "dependencies": {
+    "express": "^4.12.2"
+  },
+  "devDependencies": {
+    "coffee-script": "^1.9.1",
+    "gulp": "^3.8.11",
+    "gulp-tslint": "^1.4.3",
+    "gulp-typescript": "^2.4.2"
+  },
+  "scripts": {
+    "start": "node ./bin/www",
+    "test": "echo \"Error: no test exists\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:mtgto/prjs.git"
+  },
+  "author": "mtgto",
+  "license": "Apache License 2.0",
+  "bugs": {
+    "url": "https://github.com/mtgto/prjs/issues"
+  },
+  "homepage": "https://github.com/mtgto/prjs"
+}

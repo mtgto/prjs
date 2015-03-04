@@ -1,0 +1,7 @@
+node_modules/
+typings/
+npm-debug.log
+# Generate files from TypeScript sources
+app.js
+# IntelliJ IDEA files
+.idea/
