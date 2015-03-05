@@ -7,6 +7,7 @@ Show GitHub pull requests
 
 # Required environment
 - node.js
+- redis
 - mongodb
 
 # Development

@@ -1,7 +1,8 @@
 node_modules/
 typings/
 npm-debug.log
-# Generate files from TypeScript sources
-app.js
+# Generated files from TypeScript sources
+*.js
+routes/
 # IntelliJ IDEA files
 .idea/

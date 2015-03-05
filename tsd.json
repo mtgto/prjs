@@ -10,6 +10,27 @@
     },
     "node/node.d.ts": {
       "commit": "bb465f2cc799a41a7ccb688c6d1a8f5583dda12d"
+    },
+    "express-session/express-session.d.ts": {
+      "commit": "bb465f2cc799a41a7ccb688c6d1a8f5583dda12d"
+    },
+    "i18n-node/i18n-node.d.ts": {
+      "commit": "69bdfb0884020e41f17a1dd80ad4c77de2636874"
+    },
+    "request/request.d.ts": {
+      "commit": "fa20411dd52348e933c2b23b24365236e92fa4ac"
+    },
+    "async/async.d.ts": {
+      "commit": "fa20411dd52348e933c2b23b24365236e92fa4ac"
+    },
+    "winston/winston.d.ts": {
+      "commit": "fa20411dd52348e933c2b23b24365236e92fa4ac"
+    },
+    "form-data/form-data.d.ts": {
+      "commit": "fa20411dd52348e933c2b23b24365236e92fa4ac"
+    },
+    "mongodb/mongodb.d.ts": {
+      "commit": "fa20411dd52348e933c2b23b24365236e92fa4ac"
     }
   }
 }

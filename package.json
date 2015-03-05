@@ -3,7 +3,17 @@
   "version": "0.0.1",
   "description": "Show GitHub pull requests",
   "dependencies": {
-    "express": "^4.12.2"
+    "async": "^0.9.0",
+    "bson": "^0.2.19",
+    "connect-redis": "^2.2.0",
+    "express": "^4.12.2",
+    "express-session": "^1.10.3",
+    "i18n": "^0.5.0",
+    "jade": "^1.9.2",
+    "less-middleware": "^2.0.1",
+    "mongodb": "^1.4.33",
+    "request": "^2.53.0",
+    "winston": "^0.9.0"
   },
   "devDependencies": {
     "coffee-script": "^1.9.1",
