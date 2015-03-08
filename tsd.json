@@ -31,6 +31,12 @@
     },
     "mongodb/mongodb.d.ts": {
       "commit": "fa20411dd52348e933c2b23b24365236e92fa4ac"
+    },
+    "csurf/csurf.d.ts": {
+      "commit": "fa20411dd52348e933c2b23b24365236e92fa4ac"
+    },
+    "body-parser/body-parser.d.ts": {
+      "commit": "fa20411dd52348e933c2b23b24365236e92fa4ac"
     }
   }
 }

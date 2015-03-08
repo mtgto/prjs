@@ -24,6 +24,8 @@ import path = require('path');
 import url = require('url');
 import querystring = require('querystring');
 import crypto = require('crypto');
+import csurf = require('csurf');
+import bodyParser = require('body-parser');
 var RedisStore = require('connect-redis')(session);
 
 var app: express.Application = express();
@@ -38,14 +40,15 @@ app.locals.options = <prjs.Options>{
     },
     redis: {
         host: process.env.REDIS_HOST || 'localhost',
-        port: process.env.REDIS_PORT || 6379
+        port: parseInt(process.env.REDIS_PORT || '6379')
     },
     mongo: {
         host: process.env.MONGO_HOST || 'localhost',
-        port: process.env.MONGO_PORT || 27017,
+        port: parseInt(process.env.MONGO_PORT || '27017'),
         db: process.env.MONGO_DB || 'prjs'
     },
-    secret: process.env.SECRET || 'secret'
+    secret: process.env.SECRET || 'secret',
+    maxRepositories: parseInt(process.env.MAX_REPOSITORIES || '5')
 };
 
 i18n.configure(<i18n.ConfigurationOptions>{
@@ -59,7 +62,8 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.use(<express.RequestHandler>i18n.init);
 app.use(require('less-middleware')(path.join(__dirname, 'public')));
-app.use(express.static(__dirname + 'public'));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(bodyParser.json());
 
 // Setup session
 app.use(session({
@@ -97,21 +101,15 @@ var loginCheck: express.RequestHandler = function(req: express.Request, res: exp
 };
 
 // routing
-app.get('/', loginCheck, function (req: express.Request, res: express.Response, next: Function) {
-    var options: prjs.Options = res.locals.options;
-    var userId: number = parseInt((<Express.Request>req).session[prjs.sessions.userIdKey]);
-    var dba: db.DB = new db.DB(options.mongo.host, options.mongo.port, options.mongo.db);
-    dba.getUserRepositories(userId, function(err, repos) {
-       if (err) {
-           next(err);
-       } else {
-           res.render('index', { title: repos });
-       }
-    });
-});
-
+var csrfProtection = csurf();
+import index = require('./routes/index');
+app.get('/', loginCheck, index.index);
 import authenticate = require('./routes/authenticate');
 app.get('/authenticate', authenticate.index);
+import api = require('./routes/api');
+//app.post('/api/repos/add', loginCheck, csrfProtection, api.addRepository);
+app.post('/api/repos/add', loginCheck, api.addRepository);
+app.post('/api/repos/delete', loginCheck, csrfProtection, api.deleteRepository);
 
 // error handlers
 
@@ -128,7 +126,7 @@ if (app.get('env') === 'development') {
 }
 
 // production error handler
-// no stacktraces leaked to user
+// no stack traces leaked to user
 app.use(function(err: any, req: express.Request, res: express.Response, next: Function) {
     res.status(err.status || 500);
     res.render('error', {

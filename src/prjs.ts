@@ -24,6 +24,7 @@ export interface Options {
     redis: { host: string; port: number };
     mongo: { host: string; port: number; db: string };
     secret: string;
+    maxRepositories: number;
 }
 
 export module sessions {

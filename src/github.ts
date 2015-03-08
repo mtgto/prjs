@@ -20,9 +20,10 @@ import url = require('url');
 import request = require('request');
 import async = require('async');
 import logger = require('winston');
+import util = require('util');
 
 export interface APIRequestHandler {
-    (err: any, next: Function): any;
+    (err: any, result: any): any;
 }
 
 export class Client {
@@ -50,8 +51,22 @@ export class Client {
         });
     }
 
-    getPullRequests(orgs: string, repo: string, callback: APIRequestHandler) {
-        callback(new prjs.HTTPError(500, "Not yet implemented."), null);
+    getPullRequests(owner: string, repo: string, callback: APIRequestHandler) {
+        var apiUrl:string = url.resolve(this.apiUrl, util.format('repos/%s/%s/pulls', owner, repo));
+        var headers: request.Headers = this.getHeaders();
+        var options:request.Options = {headers: headers};
+        request.get(apiUrl, options, function (error, response, body) {
+            if (error) {
+                logger.warn('GitHub API returns error: %s, response: %s, body: %s', [error, response, body]);
+                callback(new prjs.HTTPError(response.statusCode, "Failed to get pull requests."), null);
+            } else {
+                if (response.statusCode == 200) {
+                    callback(null, JSON.parse(body));
+                } else {
+                    callback(new prjs.HTTPError(response.statusCode, "Failed to get pull requests."), null);
+                }
+            }
+        });
     }
 
     private getHeaders(): request.Headers {

@@ -81,7 +81,7 @@ export var index = function(req: express.Request, res: express.Response, next: F
             var login: string = user['login'];
             logger.info(util.format('Login user: id=%d, login=%s', user.id, user.login));
             var dba: db.DB = new db.DB(options.mongo.host, options.mongo.port, options.mongo.db);
-            dba.addUser(userId, login, [], function(err) {
+            dba.addUser(userId, login, function(err) {
                 if (err) {
                     callback(err);
                 } else {

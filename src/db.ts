@@ -39,7 +39,7 @@ export class DB {
         this.dbname = dbname;
     }
 
-    public addUser(userId: number, login: string, repos: string[], callback: (error) => void) {
+    public addUser(userId: number, login: string, callback: (error) => void) {
         this.getDB(function(err, db) {
             if (err) {
                 callback(err);
@@ -52,13 +52,76 @@ export class DB {
                         users.update(
                             {id: userId},
                             {
-                                '$set': {'login': login},
-                                '$push': {repos: repos}
+                                '$set': {'login': login}
                             },
                             {upsert: true},
                             function(error, user) {
                                 if (error) {
                                     logger.warn(util.format('Failed to update users database: id=%d, login: %s', userId, login));
+                                    callback(error);
+                                } else {
+                                    callback(null);
+                                }
+                            }
+                        );
+                    }
+
+                });
+            }
+        });
+    }
+
+    public addUserRepository(userId: number, repository: string, callback: (error) => void) {
+        this.getDB(function(err, db) {
+            if (err) {
+                callback(err);
+            } else {
+                db.collection('users', function(error, users) {
+                    if (error) {
+                        logger.warn('Failed to set up to use users database.');
+                        callback(error);
+                    } else {
+                        users.update(
+                            {id: userId},
+                            {
+                                '$addToSet': {'repos': repository}
+                            },
+                            {},
+                            function(error) {
+                                if (error) {
+                                    logger.warn(util.format('Failed to update users database: id=%d, repository: %s', userId, repository));
+                                    callback(error);
+                                } else {
+                                    callback(null);
+                                }
+                            }
+                        );
+                    }
+
+                });
+            }
+        });
+    }
+
+    public deleteUserRepository(userId: number, repository: string, callback: (error) => void) {
+        this.getDB(function(err, db) {
+            if (err) {
+                callback(err);
+            } else {
+                db.collection('users', function(error, users) {
+                    if (error) {
+                        logger.warn('Failed to set up to use users database.');
+                        callback(error);
+                    } else {
+                        users.update(
+                            {id: userId},
+                            {
+                                '$unset': {'repos': repository}
+                            },
+                            {},
+                            function(error) {
+                                if (error) {
+                                    logger.warn(util.format('Failed to update users database: id=%d, repository: %s', userId, repository));
                                     callback(error);
                                 } else {
                                     callback(null);
