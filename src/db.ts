@@ -71,7 +71,7 @@ export class DB {
         });
     }
 
-    public addUserRepository(userId: number, repository: string, callback: (error) => void) {
+    public addUserRepository(userId: number, repository: string, callback: (error, result?: boolean) => void) {
         this.getDB(function(err, db) {
             if (err) {
                 callback(err);
@@ -86,12 +86,14 @@ export class DB {
                             {
                                 '$addToSet': {'repos': repository}
                             },
-                            {},
-                            function(error) {
+                            { writeConcern: true },
+                            function(error, result) {
                                 if (error) {
                                     logger.warn(util.format('Failed to update users database: id=%d, repository: %s', userId, repository));
                                     callback(error);
                                 } else {
+                                    logger.info("AddUserRepository result= " + result);
+                                    logger.info("nModified = " + result.nModified);
                                     callback(null);
                                 }
                             }

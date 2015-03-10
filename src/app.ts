@@ -108,6 +108,7 @@ import authenticate = require('./routes/authenticate');
 app.get('/authenticate', authenticate.index);
 import api = require('./routes/api');
 //app.post('/api/repos/add', loginCheck, csrfProtection, api.addRepository);
+app.get('/api/pulls', loginCheck, api.getPullRequests);
 app.post('/api/repos/add', loginCheck, api.addRepository);
 app.post('/api/repos/delete', loginCheck, csrfProtection, api.deleteRepository);
 

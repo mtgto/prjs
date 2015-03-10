@@ -13,7 +13,7 @@ block content
     each prs, repo_name in repos
         div.panel.panel-default
             div.panel-heading= repo_name
-                a.button.pull-right(name="unsubscribe" repository="#{repo_name}") Unsubscribe
+                a.pull-right(name="unsubscribe" repository="#{repo_name}") Unsubscribe
             each pr in prs
                 +pr(pr)
     h3 Subscribe other repository
@@ -22,4 +22,7 @@ block content
             label.sr-only Subscribe other repository
             input.form-control(type="text" name="repo" placeholder="ex. 'owner/repo'")
         button.btn.btn-primary(type="submit" name="subscribe") Add
+
+    div(id="content")
     script(type="text/javascript" src="js/index.js")
+    script(type="text/jsx" src="js/index.jsx")

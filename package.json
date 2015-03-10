@@ -13,7 +13,7 @@
     "i18n": "^0.5.0",
     "jade": "^1.9.2",
     "less-middleware": "^2.0.1",
-    "mongodb": "^1.4.33",
+    "mongodb": "^1.4.34",
     "request": "^2.53.0",
     "winston": "^0.9.0"
   },
