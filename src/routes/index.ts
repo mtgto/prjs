@@ -24,7 +24,7 @@ import csurf = require('csurf');
 export var index = function(req: express.Request, res: express.Response, next: Function) {
     var options: prjs.Options = res.locals.options;
     var userId: number = parseInt((<Express.Request>req).session[prjs.sessions.userIdKey]);
-    var dba: db.DB = new db.DB(options.mongo.host, options.mongo.port, options.mongo.db);
+    var dba: db.DB = new db.DB(options.mongo.host, options.mongo.port, options.mongo.db, options.mongo.username, options.mongo.password);
     dba.getUserRepositories(userId, function(err, repoNames) {
         if (err) {
             next(err);

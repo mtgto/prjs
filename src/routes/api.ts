@@ -30,7 +30,7 @@ export var getPullRequests = function(req: express.Request, res: express.Respons
     logger.info(util.format('User %d try to get user pull requests', userId));
     async.waterfall([
         function(callback) {
-            var dba: db.DB = new db.DB(options.mongo.host, options.mongo.port, options.mongo.db);
+            var dba: db.DB = new db.DB(options.mongo.host, options.mongo.port, options.mongo.db, options.mongo.username, options.mongo.password);
             dba.getUserRepositories(userId, function(err, repoNames) {
                 if (err) {
                     callback(err);
@@ -90,7 +90,7 @@ export var addRepository = function(req: express.Request, res: express.Response,
             });
         },
         function(pulls, callback) {
-            var dba: db.DB = new db.DB(options.mongo.host, options.mongo.port, options.mongo.db);
+            var dba: db.DB = new db.DB(options.mongo.host, options.mongo.port, options.mongo.db, options.mongo.username, options.mongo.password);
             dba.addUserRepository(userId, owner + '/' + repo, function(err, result) {
                 if (err) {
                     callback(err);
@@ -136,7 +136,7 @@ export var deleteRepository = function(req: express.Request, res: express.Respon
             });
         },
         function(pulls, callback) {
-            var dba: db.DB = new db.DB(options.mongo.host, options.mongo.port, options.mongo.db);
+            var dba: db.DB = new db.DB(options.mongo.host, options.mongo.port, options.mongo.db, options.mongo.username, options.mongo.password);
             dba.deleteUserRepository(userId, owner + '/' + repo, function(err, result?: boolean) {
                 if (err) {
                     callback(err);
