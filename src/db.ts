@@ -185,7 +185,6 @@ export class DB {
                 });
             } else {
                 logger.info("No authenticate to Mongo");
-                logger.info(util.format('username=%s, password=%s', this.username, this.password));
                 callback(err, db);
             }
         })
