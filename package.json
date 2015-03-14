@@ -20,10 +20,11 @@
     "coffee-script": "^1.9.1",
     "gulp": "^3.8.11",
     "gulp-tslint": "^1.4.3",
-    "gulp-typescript": "^2.4.2"
+    "gulp-typescript": "^2.4.2",
+    "tsd": "next"
   },
   "scripts": {
-    "build": "tsd reinstall -so && gulp typescript",
+    "build": "./node_modules/.bin/tsd reinstall -so && ./node_modules/.bin/gulp typescript",
     "start": "node ./bin/www",
     "test": "echo \"Error: no test exists\""
   },
