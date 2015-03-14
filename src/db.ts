@@ -86,15 +86,13 @@ export class DB {
                             {
                                 '$addToSet': {'repos': repository}
                             },
-                            { writeConcern: true },
+                            {},
                             function(error, result) {
                                 if (error) {
                                     logger.warn(util.format('Failed to update users database: id=%d, repository: %s', userId, repository));
                                     callback(error);
                                 } else {
-                                    logger.info("AddUserRepository result= " + result);
-                                    logger.info("nModified = " + result.nModified);
-                                    callback(null);
+                                    callback(null, result['result']['nModified'] == 1);
                                 }
                             }
                         );
@@ -105,7 +103,7 @@ export class DB {
         });
     }
 
-    public deleteUserRepository(userId: number, repository: string, callback: (error) => void) {
+    public deleteUserRepository(userId: number, repository: string, callback: (error, result?: boolean) => void) {
         this.getDB(function(err, db) {
             if (err) {
                 callback(err);
@@ -118,15 +116,15 @@ export class DB {
                         users.update(
                             {id: userId},
                             {
-                                '$unset': {'repos': repository}
+                                '$pull': {'repos': repository}
                             },
                             {},
-                            function(error) {
+                            function(error, result) {
                                 if (error) {
                                     logger.warn(util.format('Failed to update users database: id=%d, repository: %s', userId, repository));
                                     callback(error);
                                 } else {
-                                    callback(null);
+                                    callback(null, result['result']['nModified'] == 1);
                                 }
                             }
                         );
@@ -154,7 +152,7 @@ export class DB {
                                     logger.warn(util.format('Failed to get an user database: id=%d', userId));
                                     callback(error);
                                 } else if (user) {
-                                    callback(null, user.repos);
+                                    callback(null, user.repos || []);
                                 } else {
                                     logger.warn(util.format('No user found. id=%d', userId));
                                     callback(new Error('No user found'));

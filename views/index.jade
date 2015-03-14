@@ -1,28 +1,6 @@
 extends layout
-mixin pr(pr)
-    a.list-group-item(href= pr.html_url)
-        p #{pr.title}
-        small.list-group-item-text ##{pr.number} by #{pr.user.login}
 
 block content
-    h1 prjs
-    //h2 Yours
-    //each  in
-
-    h2 Watching
-    each prs, repo_name in repos
-        div.panel.panel-default
-            div.panel-heading= repo_name
-                a.pull-right(name="unsubscribe" repository="#{repo_name}") Unsubscribe
-            each pr in prs
-                +pr(pr)
-    h3 Subscribe other repository
-    form.form-inline(action="#")
-        div.form-group
-            label.sr-only Subscribe other repository
-            input.form-control(type="text" name="repo" placeholder="ex. 'owner/repo'")
-        button.btn.btn-primary(type="submit" name="subscribe") Add
-
     div(id="content")
-    script(type="text/javascript" src="js/index.js")
+    script(type="text/javascript") var csrfToken = "#{csrfToken}";
     script(type="text/jsx" src="js/index.jsx")

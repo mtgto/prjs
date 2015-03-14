@@ -2,6 +2,7 @@ extends layout
 block content
     div.jumbotron
         h1 prjs
+        p= __("prjs show you open pull requests of watching.")
         p= __("Before you use this service, you need to login with your GitHub account.")
         p
             a.btn.btn-primary.btn-lg(href=loginUrl)= __("Login with GitHub account")

@@ -26,6 +26,7 @@ import querystring = require('querystring');
 import crypto = require('crypto');
 import csurf = require('csurf');
 import bodyParser = require('body-parser');
+import cookieParser = require('cookie-parser');
 var RedisStore = require('connect-redis')(session);
 
 var app: express.Application = express();
@@ -40,7 +41,8 @@ app.locals.options = <prjs.Options>{
     },
     redis: {
         host: process.env.REDIS_HOST || 'localhost',
-        port: parseInt(process.env.REDIS_PORT || '6379')
+        port: parseInt(process.env.REDIS_PORT || '6379'),
+        password: process.env.REDIS_PASSWORD || undefined
     },
     mongo: {
         host: process.env.MONGO_HOST || 'localhost',
@@ -64,12 +66,14 @@ app.use(<express.RequestHandler>i18n.init);
 app.use(require('less-middleware')(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 // Setup session
 app.use(session({
     store: new RedisStore({
         host: app.locals.options.redis.host,
-        port: app.locals.options.redis.port
+        port: app.locals.options.redis.port,
+        pass: app.locals.options.redis.password
     }),
     secret: app.locals.options.secret,
     resave: false,
@@ -103,13 +107,12 @@ var loginCheck: express.RequestHandler = function(req: express.Request, res: exp
 // routing
 var csrfProtection = csurf();
 import index = require('./routes/index');
-app.get('/', loginCheck, index.index);
+app.get('/', loginCheck, csrfProtection, index.index);
 import authenticate = require('./routes/authenticate');
 app.get('/authenticate', authenticate.index);
 import api = require('./routes/api');
-//app.post('/api/repos/add', loginCheck, csrfProtection, api.addRepository);
 app.get('/api/pulls', loginCheck, api.getPullRequests);
-app.post('/api/repos/add', loginCheck, api.addRepository);
+app.post('/api/repos/add', loginCheck, csrfProtection, api.addRepository);
 app.post('/api/repos/delete', loginCheck, csrfProtection, api.deleteRepository);
 
 // error handlers

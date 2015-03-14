@@ -37,6 +37,9 @@
     },
     "body-parser/body-parser.d.ts": {
       "commit": "fa20411dd52348e933c2b23b24365236e92fa4ac"
+    },
+    "cookie-parser/cookie-parser.d.ts": {
+      "commit": "c594427c40354eae9dc618c50dc1c3d83da477b5"
     }
   }
 }

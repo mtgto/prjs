@@ -7,13 +7,14 @@
     "body-parser": "^1.12.0",
     "bson": "^0.2.19",
     "connect-redis": "^2.2.0",
+    "cookie-parser": "^1.3.4",
     "csurf": "^1.7.0",
     "express": "^4.12.2",
     "express-session": "^1.10.3",
     "i18n": "^0.5.0",
     "jade": "^1.9.2",
     "less-middleware": "^2.0.1",
-    "mongodb": "^1.4.34",
+    "mongodb": "^2.0.21",
     "request": "^2.53.0",
     "winston": "^0.9.0"
   },
@@ -24,6 +25,7 @@
     "gulp-typescript": "^2.4.2"
   },
   "scripts": {
+    "build": "tsd reinstall -so && gulp typescript",
     "start": "node ./bin/www",
     "test": "echo \"Error: no test exists\""
   },

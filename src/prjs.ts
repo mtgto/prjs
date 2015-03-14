@@ -21,7 +21,7 @@
  */
 export interface Options {
     github: { publicUrl: string; apiUrl: string; clientId: string; clientSecret: string; userAgent: string };
-    redis: { host: string; port: number };
+    redis: { host: string; port: number; password?: string };
     mongo: { host: string; port: number; db: string };
     secret: string;
     maxRepositories: number;
