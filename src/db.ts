@@ -173,10 +173,12 @@ export class DB {
     private getDB(callback: (err, db: mongo.Db) => void) {
         var server = new mongo.Server(this.host, this.port, {auto_reconnect: true});
         var db = new mongo.Db(this.dbname, server, { w: 1 });
+        var username = this.username;
+        var password = this.password;
         db.open(function(err, db) {
-            if (this.username && this.password) {
+            if (username && password) {
                 logger.info("Authenticate to Mongo");
-                db.authenticate(this.username, this.password, function(err) {
+                db.authenticate(username, password, function(err) {
                     if (err) {
                         callback(err, null);
                     } else {
@@ -184,8 +186,7 @@ export class DB {
                     }
                 });
             } else {
-                logger.info(util.format("No authenticate to Mongo: %s, %s", this.username, this.password));
-                logger.info(util.format('host:%s, port:%d, dbname:%s, username:%s, password:%s', this.host, this.port, this.dbname, this.username, this.password));
+                logger.info("No authenticate to Mongo");
                 callback(err, db);
             }
         })
