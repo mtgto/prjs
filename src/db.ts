@@ -35,7 +35,7 @@ export class DB {
     username: string;
     password: string;
 
-    constructor(host: string, port: number, dbname: string, username?: string, password?: string) {
+    constructor(host: string, port: number, dbname: string, username: string, password: string) {
         this.host = host;
         this.port = port;
         this.dbname = dbname;
