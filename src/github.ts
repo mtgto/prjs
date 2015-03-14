@@ -45,8 +45,10 @@ export class Client {
             if (error) {
                 logger.warn('GitHub API returns error: %s, response: %s, body: %s', [error, response, body]);
                 callback(new prjs.HTTPError(response.statusCode, "Failed to get your information via GitHub API."), null);
-            } else {
+            } else if (response.statusCode == 200) {
                 callback(null, JSON.parse(body));
+            } else {
+                callback(new prjs.HTTPError(response.statusCode, "Failed to get your information via GitHub API."), null);
             }
         });
     }
