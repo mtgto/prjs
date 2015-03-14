@@ -32,11 +32,15 @@ export class DB {
     host: string;
     port: number;
     dbname: string;
+    username: string;
+    password: string;
 
-    constructor(host: string, port: number, dbname: string) {
+    constructor(host: string, port: number, dbname: string, username?: string, password?: string) {
         this.host = host;
         this.port = port;
         this.dbname = dbname;
+        this.username = username;
+        this.password = password;
     }
 
     public addUser(userId: number, login: string, callback: (error) => void) {
@@ -170,7 +174,13 @@ export class DB {
         var server = new mongo.Server(this.host, this.port, {auto_reconnect: true});
         var db = new mongo.Db(this.dbname, server, { w: 1 });
         db.open(function(err, db) {
-            callback(err, db);
+            if (this.username && this.password) {
+                db.authenticate(this.username, this.password, function(err, result) {
+                    callback(err, db);
+                });
+            } else {
+                callback(err, db);
+            }
         })
     }
 }

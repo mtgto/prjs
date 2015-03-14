@@ -47,7 +47,9 @@ app.locals.options = <prjs.Options>{
     mongo: {
         host: process.env.MONGO_HOST || 'localhost',
         port: parseInt(process.env.MONGO_PORT || '27017'),
-        db: process.env.MONGO_DB || 'prjs'
+        db: process.env.MONGO_DB || 'prjs',
+        username: process.env.MONGO_USER || undefined,
+        password: process.env.MONGO_PASSWORD || undefined
     },
     secret: process.env.SECRET || 'secret',
     maxRepositories: parseInt(process.env.MAX_REPOSITORIES || '5')
