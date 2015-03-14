@@ -24,8 +24,8 @@
     "tsd": "next"
   },
   "scripts": {
-    "build": "./node_modules/.bin/tsd reinstall -so && ./node_modules/.bin/gulp typescript",
     "start": "node ./bin/www",
+    "postinstall": "./node_modules/.bin/tsd reinstall -so && ./node_modules/.bin/gulp typescript",
     "test": "echo \"Error: no test exists\""
   },
   "repository": {
