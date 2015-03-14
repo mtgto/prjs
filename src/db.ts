@@ -175,8 +175,12 @@ export class DB {
         var db = new mongo.Db(this.dbname, server, { w: 1 });
         db.open(function(err, db) {
             if (this.username && this.password) {
-                db.authenticate(this.username, this.password, function(err, result) {
-                    callback(err, result);
+                db.authenticate(this.username, this.password, function(err) {
+                    if (err) {
+                        callback(err, null);
+                    } else {
+                        callback(null, db);
+                    }
                 });
             } else {
                 callback(err, db);
