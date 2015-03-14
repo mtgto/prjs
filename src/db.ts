@@ -176,7 +176,7 @@ export class DB {
         db.open(function(err, db) {
             if (this.username && this.password) {
                 db.authenticate(this.username, this.password, function(err, result) {
-                    callback(err, db);
+                    callback(err, result);
                 });
             } else {
                 callback(err, db);
