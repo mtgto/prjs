@@ -175,6 +175,7 @@ export class DB {
         var db = new mongo.Db(this.dbname, server, { w: 1 });
         db.open(function(err, db) {
             if (this.username && this.password) {
+                logger.info("Authenticate to Mongo");
                 db.authenticate(this.username, this.password, function(err) {
                     if (err) {
                         callback(err, null);
@@ -183,6 +184,7 @@ export class DB {
                     }
                 });
             } else {
+                logger.info("No authenticate to Mongo");
                 callback(err, db);
             }
         })
