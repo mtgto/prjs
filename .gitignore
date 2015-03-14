@@ -3,6 +3,6 @@ typings/
 npm-debug.log
 # Generated files from TypeScript sources
 *.js
-routes/
+/routes/
 # IntelliJ IDEA files
 .idea/
