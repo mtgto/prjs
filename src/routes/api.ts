@@ -40,29 +40,21 @@ export var getPullRequests = function(req: express.Request, res: express.Respons
                 }
             });
         },
-        function (repoNames, callback) {
+        function (repoNames: [string], callback) {
             var client = new github.Client(options.github.apiUrl, options.github.userAgent, accessToken);
-            var repos = repoNames.map(function(repoName, index) {
-                //client.getPullRequests(repoName)
-                return {
-                    name: repoName,
-                    pulls: [
-                        {
-                            title: 'test1',
-                            number: 123,
-                            user: {login: 'user1'},
-                            html_url: 'https://github.com/mtgto/test/pulls/1'
-                        },
-                        {
-                            title: 'test2',
-                            number: 45,
-                            user: {login: 'user2'},
-                            html_url: 'https://github.com/mtgto/test/pulls/1'
+            async.series(repoNames.map(function (repoName: string) {
+                return function (callback) {
+                    client.getPullRequests(repoName, function(err, pulls) {
+                        if (err) {
+                            callback(err);
+                        } else {
+                            callback(err, {name: repoName, pulls: pulls});
                         }
-                    ]
+                    });
                 };
+            }), function (err, results) {
+                callback(err, results);
             });
-            callback(null, repos);
         }
     ], function(err, repos) {
         if (err) {
