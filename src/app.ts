@@ -37,7 +37,8 @@ app.locals.options = <prjs.Options>{
         apiUrl: process.env.GITHUB_PUBLIC_URL || 'https://api.github.com/',
         clientId: process.env.GITHUB_CLIENT_ID || '',
         clientSecret: process.env.GITHUB_CLIENT_SECRET || '',
-        userAgent: process.env.GITHUB_USERAGENT || 'prjs'
+        userAgent: process.env.GITHUB_USERAGENT || 'prjs',
+        scopes: process.env.GITHUB_SCOPES || 'repo'
     },
     redis: {
         host: process.env.REDIS_HOST || 'localhost',
@@ -96,7 +97,7 @@ var loginCheck: express.RequestHandler = function(req: express.Request, res: exp
         var query: string = querystring.stringify(
             {
                 client_id: res.locals.options.github.clientId,
-                scope: 'repo',
+                scope: res.locals.options.github.scopes,
                 state: randomString
             }
         );
