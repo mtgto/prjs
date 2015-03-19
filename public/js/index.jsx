@@ -15,20 +15,14 @@ var AddRepositoryForm = React.createClass({
     },
     handleSubmit: function(e) {
         e.preventDefault();
-        var matches = this.refs.repo.getDOMNode().value.trim().match(/(\S+)\/(\S+)/);
-        if (matches.length == 3) {
-            var owner = matches[1];
-            var repo = matches[2];
-            var form = this;
-            this.props.onRepositorySubmit({owner: owner, repo: repo}, function(err) {
-                if (err) {
-                    form.setState({hasError: true});
-                }
-            });
-            this.refs.repo.getDOMNode().value = '';
-        } else {
-            // TODO indicate text box
-        }
+        var repositoryName = this.refs.repo.getDOMNode().value.trim();
+        var form = this;
+        this.props.onRepositorySubmit(repositoryName, function(err) {
+            if (err) {
+                form.setState({hasError: true});
+            }
+        });
+        this.refs.repo.getDOMNode().value = '';
     },
     render: function() {
         var cx = React.addons.classSet;
@@ -91,16 +85,7 @@ var UnsubscribeAnchor = React.createClass({
 
 var RepositoryList = React.createClass({
     getInitialState: function() {
-        return {data: [
-            //{name: 'mtgto/test', pulls: [
-            //    {"title":"test1","number":123,"user":{"login":"user1"},"html_url":"https://github.com/mtgto/test/pulls/1"},
-            //    {"title":"test2","number":45,"user":{"login":"user2"},"html_url":"https://github.com/mtgto/test/pulls/2"}
-            //]},
-            //{name: 'mtgto/test2', pulls: [
-            //    {"title":"test3","number":123,"user":{"login":"user1"},"html_url":"https://github.com/mtgto/test/pulls/1"},
-            //    {"title":"test4","number":45,"user":{"login":"user2"},"html_url":"https://github.com/mtgto/test/pulls/2"}
-            //]}
-        ]};
+        return {data: []};
     },
     componentDidMount: function() {
         $.ajax({
@@ -114,13 +99,13 @@ var RepositoryList = React.createClass({
             }.bind(this)
         });
     },
-    handleRepositorySubmit: function(repository, callback) {
+    handleRepositorySubmit: function(repositoryName, callback) {
         $.ajax({
             type: 'POST',
             url: 'api/repos/add',
             dataType: 'json',
             contentType: 'application/json',
-            data: JSON.stringify({owner: repository.owner, repo: repository.repo, _csrf: csrfToken}),
+            data: JSON.stringify({name: repositoryName, _csrf: csrfToken}),
             success: function(data) {
                 var newData = this.state.data.concat([data]);
                 this.setState({data: newData});
@@ -137,27 +122,22 @@ var RepositoryList = React.createClass({
         $('#myModal').modal();
     },
     handleUnsubscribe: function(repositoryName) {
-        var matches = repositoryName.match(/(\S+)\/(\S+)/);
-        if (matches.length == 3) {
-            var owner = matches[1];
-            var repo = matches[2];
-            $.ajax({
-                type: 'POST',
-                url: 'api/repos/delete',
-                dataType: 'json',
-                contentType: 'application/json',
-                data: JSON.stringify({owner: owner, repo: repo, _csrf: csrfToken}),
-                success: function (data) {
-                    var newData = this.state.data.filter(function(e) {
-                        return e['name'] != repositoryName;
-                    });
-                    this.setState({data: newData});
-                }.bind(this),
-                error: function (xhr, status, err) {
-                    console.error(this.props.url, status, err.toString());
-                }.bind(this)
-            });
-        }
+        $.ajax({
+            type: 'POST',
+            url: 'api/repos/delete',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify({name: repositoryName, _csrf: csrfToken}),
+            success: function (data) {
+                var newData = this.state.data.filter(function(e) {
+                    return e['name'] != repositoryName;
+                });
+                this.setState({data: newData});
+            }.bind(this),
+            error: function (xhr, status, err) {
+                console.error(this.props.url, status, err.toString());
+            }.bind(this)
+        });
     },
     render: function() {
         var self = this;
@@ -190,7 +170,6 @@ var RepositoryList = React.createClass({
         }
         return (
             <div className="row">
-                <h1>prjs</h1>
                 <h2>Watching</h2>
                 <DeleteRepositoryAlert repositoryName={this.state.deleteRepositoryName} onUnsubscribe={this.handleUnsubscribe}/>
                 {repositoryNodes}

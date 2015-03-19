@@ -116,6 +116,8 @@ import api = require('./routes/api');
 app.get('/api/pulls', loginCheck, api.getPullRequests);
 app.post('/api/repos/add', loginCheck, csrfProtection, api.addRepository);
 app.post('/api/repos/delete', loginCheck, csrfProtection, api.deleteRepository);
+import logout = require('./routes/logout');
+app.get('/logout', loginCheck, logout.index);
 
 // error handlers
 

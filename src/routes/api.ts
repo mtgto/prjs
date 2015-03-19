@@ -27,6 +27,7 @@ import util = require('util');
 export var getPullRequests = function(req: express.Request, res: express.Response, next: Function) {
     var options:prjs.Options = res.locals.options;
     var userId:number = parseInt((<Express.Request>req).session[prjs.sessions.userIdKey]);
+    var accessToken = (<Express.Request>req).session[prjs.sessions.accessTokenKey];
     logger.info(util.format('User %d try to get user pull requests', userId));
     async.waterfall([
         function(callback) {
@@ -40,7 +41,9 @@ export var getPullRequests = function(req: express.Request, res: express.Respons
             });
         },
         function (repoNames, callback) {
+            var client = new github.Client(options.github.apiUrl, options.github.userAgent, accessToken);
             var repos = repoNames.map(function(repoName, index) {
+                //client.getPullRequests(repoName)
                 return {
                     name: repoName,
                     pulls: [
@@ -73,14 +76,13 @@ export var getPullRequests = function(req: express.Request, res: express.Respons
 export var addRepository = function(req: express.Request, res: express.Response, next: Function) {
     var options:prjs.Options = res.locals.options;
     var userId:number = parseInt((<Express.Request>req).session[prjs.sessions.userIdKey]);
-    var owner:string = req.body['owner'];
-    var repo:string = req.body['repo'];
-    logger.info(util.format('User %d try to add repository %s/%s', userId, owner, repo));
+    var repositoryName = req.body['name'];
+    logger.info(util.format('User %d try to add repository %s', userId, repositoryName));
     async.waterfall([
         function(callback) {
             var accessToken:string = (<Express.Request>req).session[prjs.sessions.accessTokenKey];
             var client = new github.Client(options.github.apiUrl, options.github.userAgent, accessToken);
-            client.getPullRequests(owner, repo, function (err, pulls) {
+            client.getPullRequests(repositoryName, function (err, pulls) {
                 if (err) {
                     callback(err);
                 } else {
@@ -91,7 +93,7 @@ export var addRepository = function(req: express.Request, res: express.Response,
         },
         function(pulls, callback) {
             var dba: db.DB = new db.DB(options.mongo.host, options.mongo.port, options.mongo.db, options.mongo.username, options.mongo.password);
-            dba.addUserRepository(userId, owner + '/' + repo, function(err, result) {
+            dba.addUserRepository(userId, repositoryName, function(err, result) {
                 if (err) {
                     callback(err);
                 } else {
@@ -103,11 +105,10 @@ export var addRepository = function(req: express.Request, res: express.Response,
         if (err) {
             next(err);
         } else {
-            console.log('AAAA' + JSON.stringify(result));
             var pulls = result[0];
             var success = result[1];
             if (success) {
-                res.json({name: owner + '/' + repo, pulls: pulls});
+                res.json({name: repositoryName, pulls: pulls});
             } else {
                 res.status(409);
                 res.json({message: 'already added'});
@@ -119,29 +120,16 @@ export var addRepository = function(req: express.Request, res: express.Response,
 export var deleteRepository = function(req: express.Request, res: express.Response, next: Function) {
     var options:prjs.Options = res.locals.options;
     var userId:number = parseInt((<Express.Request>req).session[prjs.sessions.userIdKey]);
-    var owner:string = req.body['owner'];
-    var repo:string = req.body['repo'];
-    logger.info(util.format('User %d try to delete repository %s/%s', userId, owner, repo));
+    var repositoryName = req.body['name'];
+    logger.info(util.format('User %d try to delete repository %s', userId, repositoryName));
     async.waterfall([
-        function(callback) {
-            var accessToken:string = (<Express.Request>req).session[prjs.sessions.accessTokenKey];
-            var client = new github.Client(options.github.apiUrl, options.github.userAgent, accessToken);
-            client.getPullRequests(owner, repo, function (err, pulls) {
-                if (err) {
-                    callback(err);
-                } else {
-                    logger.info('pulls = ' + JSON.stringify(pulls));
-                    callback(null, pulls);
-                }
-            });
-        },
         function(pulls, callback) {
             var dba: db.DB = new db.DB(options.mongo.host, options.mongo.port, options.mongo.db, options.mongo.username, options.mongo.password);
-            dba.deleteUserRepository(userId, owner + '/' + repo, function(err, result?: boolean) {
+            dba.deleteUserRepository(userId, repositoryName, function(err, result?: boolean) {
                 if (err) {
                     callback(err);
                 } else {
-                    callback(null, [pulls, result]);
+                    callback(null, result);
                 }
             });
         }
@@ -149,10 +137,8 @@ export var deleteRepository = function(req: express.Request, res: express.Respon
         if (err) {
             next(err);
         } else {
-            var pulls = result[0];
-            var success = result[1];
-            if (success) {
-                res.json({name: owner + '/' + repo, pulls: pulls});
+            if (result) {
+                res.json({name: repositoryName});
             } else {
                 res.status(404);
                 res.json({message: 'not found'});

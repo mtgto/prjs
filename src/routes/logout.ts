@@ -18,9 +18,13 @@
 
 import prjs = require('../prjs');
 import express = require('express');
-import csurf = require('csurf');
 
 export var index = function(req: express.Request, res: express.Response, next: Function) {
-    var username: string = (<Express.Request>req).session[prjs.sessions.loginKey];
-    res.render('index', { username: username, csrfToken: (<Express.Request>req).csrfToken() });
-};
+    (<Express.Request>req).session.destroy(function(err) {
+        if (err) {
+            next(err);
+        } else {
+            res.redirect('/');
+        }
+    });
+}

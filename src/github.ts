@@ -53,22 +53,29 @@ export class Client {
         });
     }
 
-    getPullRequests(owner: string, repo: string, callback: APIRequestHandler) {
-        var apiUrl:string = url.resolve(this.apiUrl, util.format('repos/%s/%s/pulls', owner, repo));
-        var headers: request.Headers = this.getHeaders();
-        var options:request.Options = {headers: headers};
-        request.get(apiUrl, options, function (error, response, body) {
-            if (error) {
-                logger.warn('GitHub API returns error: %s, response: %s, body: %s', [error, response, body]);
-                callback(new prjs.HTTPError(response.statusCode, "Failed to get pull requests."), null);
-            } else {
-                if (response.statusCode == 200) {
-                    callback(null, JSON.parse(body));
-                } else {
+    getPullRequests(repositoryName: string, callback: APIRequestHandler) {
+        var matches = repositoryName.match(/(\S+)\/(\S+)/);
+        if (matches.length == 3) {
+            var owner = matches[1];
+            var repo = matches[2];
+            var apiUrl:string = url.resolve(this.apiUrl, util.format('repos/%s/%s/pulls', owner, repo));
+            var headers: request.Headers = this.getHeaders();
+            var options:request.Options = {headers: headers};
+            request.get(apiUrl, options, function (error, response, body) {
+                if (error) {
+                    logger.warn('GitHub API returns error: %s, response: %s, body: %s', [error, response, body]);
                     callback(new prjs.HTTPError(response.statusCode, "Failed to get pull requests."), null);
+                } else {
+                    if (response.statusCode == 200) {
+                        callback(null, JSON.parse(body));
+                    } else {
+                        callback(new prjs.HTTPError(response.statusCode, "Failed to get pull requests."), null);
+                    }
                 }
-            }
-        });
+            });
+        } else {
+            callback(Error("Invalid repository name"), null);
+        }
     }
 
     private getHeaders(): request.Headers {

@@ -1,6 +1,17 @@
 extends layout
 
 block content
+    nav.nabvar.navbar-default
+        div.container-fluid
+            div.navbar-header
+                a.navbar-brand(href="#") prjs
+            div.nav.navbar-nav.navbar-right
+                li.dropdown
+                    a.dropdown-toggle(href="#" data-toggle="dropdown" aria-expanded="false")= username
+                        span.caret
+                    ul.dropdown-menu
+                        li
+                            a(href="logout") Logout
     div(id="content")
     script(type="text/javascript") var csrfToken = "#{csrfToken}";
     script(type="text/jsx" src="js/index.jsx")
