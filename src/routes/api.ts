@@ -115,7 +115,7 @@ export var deleteRepository = function(req: express.Request, res: express.Respon
     var repositoryName = req.body['name'];
     logger.info(util.format('User %d try to delete repository %s', userId, repositoryName));
     async.waterfall([
-        function(pulls, callback) {
+        function(callback) {
             var dba: db.DB = new db.DB(options.mongo.host, options.mongo.port, options.mongo.db, options.mongo.username, options.mongo.password);
             dba.deleteUserRepository(userId, repositoryName, function(err, result?: boolean) {
                 if (err) {
