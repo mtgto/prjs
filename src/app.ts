@@ -34,7 +34,7 @@ var app: express.Application = express();
 app.locals.options = <prjs.Options>{
     github: {
         publicUrl: process.env.GITHUB_PUBLIC_URL || 'https://github.com/',
-        apiUrl: process.env.GITHUB_PUBLIC_URL || 'https://api.github.com/',
+        apiUrl: process.env.GITHUB_API_URL || 'https://api.github.com/',
         clientId: process.env.GITHUB_CLIENT_ID || '',
         clientSecret: process.env.GITHUB_CLIENT_SECRET || '',
         userAgent: process.env.GITHUB_USERAGENT || 'prjs',
